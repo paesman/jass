@@ -1,0 +1,25 @@
+<form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+  <div><!-- *ngIf="teams">-->
+    <h2>Team 1</h2>
+    <div>
+      <label>
+        Spieler 1
+        <input type="text" formControlName="nameSpieler1"> /
+        Spieler 2
+        <input type="text" formControlName="nameSpieler2">
+      </label>
+    </div>
+    <h2>Team 2</h2>
+    <div>
+      <label>
+        Spieler 3
+        <input type="text" formControlName="nameSpieler3">
+        Spieler 4
+        <input type="text" formControlName="nameSpieler4">
+      </label>
+    </div>
+  </div>
+  <div style="margin-top: 5px">
+    <button type="submit" [disabled]="!teamForm.valid">Witer</button>
+  </div>
+</form>
