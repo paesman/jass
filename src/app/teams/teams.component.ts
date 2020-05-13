@@ -1,7 +1,15 @@
 import {Component} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Team} from '../team';
-import {Spieler} from '../spieler';
+import { FormGroup, FormBuilder, Validators} from '@angular/forms';
+import { SpielerdatenService } from '../services/spielerdaten.service';
+import { Team } from '../team';
+import { Router } from '@angular/router';
+
+export interface Model {
+  nameSpieler1: string;
+  nameSpieler2: string;
+  nameSpieler3: string;
+  nameSpieler4: string;
+}
 
 @Component({
   selector: 'app-teams',
@@ -10,34 +18,25 @@ import {Spieler} from '../spieler';
 })
 export class TeamsComponent {
 
-  team1: Team;
-  team2: Team;
+  teamForm: FormGroup;
 
-  teamForm = new FormGroup({
-    nameSpieler1: new FormControl(''),
-    nameSpieler2: new FormControl(''),
-    nameSpieler3: new FormControl(''),
-    nameSpieler4: new FormControl(''),
-  });
-
-  constructor() { }
-
-  onSubmit() {
-    let spieler1;
-    let spieler2;
-    let spieler3;
-    let spieler4;
-
-    spieler1 = new Spieler(this.teamForm.get('nameSpieler1').value);
-    spieler2 = new Spieler(this.teamForm.get('nameSpieler2').value);
-    this.team1 = new Team(spieler1, spieler2);
-
-    spieler3 = new Spieler(this.teamForm.get('nameSpieler3').value);
-    spieler4 = new Spieler(this.teamForm.get('nameSpieler4').value);
-    this.team2 = new Team(spieler3, spieler4);
-
-    // console.log(this.team1);
-    // console.log(this.team2);
+  constructor(private builder: FormBuilder, private spielerdaten: SpielerdatenService, private router: Router) {
+    this.teamForm = builder.group({
+      nameSpieler1: builder.control('', [Validators.required]),
+      nameSpieler2: builder.control('', [Validators.required]),
+      nameSpieler3: builder.control('', [Validators.required]),
+      nameSpieler4: builder.control('', [Validators.required]),
+    })
   }
 
+  onSubmit() {
+    console.log('on submit');
+    const model: Model = this.teamForm.value;
+    console.log(this.teamForm.value);
+    this.spielerdaten.Team1 = { spieler1: { name: model.nameSpieler1 }, spieler2: { name: model.nameSpieler2 } } as Team;
+    this.spielerdaten.Team2 = { spieler1: { name: model.nameSpieler3 }, spieler2: { name: model.nameSpieler4 } } as Team;
+
+    this.router.navigate(['/spielweise']);
+  }
 }
+

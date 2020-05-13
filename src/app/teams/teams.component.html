@@ -1,5 +1,5 @@
 <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
-  <div><!-- *ngIf="teams">-->
+  <div>
     <h2>Team 1</h2>
     <div>
       <label>
@@ -20,6 +20,6 @@
     </div>
   </div>
   <div style="margin-top: 5px">
-    <button type="submit" [disabled]="!teamForm.valid" routerLink="/spielweise" routerLinkActive="active">Witer</button>
+    <button type="submit" [disabled]="!teamForm.valid">Witer</button>
   </div>
 </form>
