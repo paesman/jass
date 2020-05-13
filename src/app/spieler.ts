@@ -1,3 +1,3 @@
-export class Spieler {
+export interface Spieler {
   name: string;
 }

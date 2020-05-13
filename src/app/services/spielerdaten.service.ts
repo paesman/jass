@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Team } from 'src/app/team';
+import {Injectable} from '@angular/core';
+import {Team} from 'src/app/team';
+import {Spielweise} from "../spielweise";
 
 
 @Injectable({
@@ -10,6 +11,6 @@ export class SpielerdatenService {
   Team1: Team;
   Team2: Team;
 
-  punktestand: number;
+  Spielweise: Spielweise;
 
 }

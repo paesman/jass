@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
-import { FormGroup, FormBuilder, Validators} from '@angular/forms';
-import { SpielerdatenService } from '../services/spielerdaten.service';
-import { Team } from '../team';
-import { Router } from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {SpielerdatenService} from '../services/spielerdaten.service';
+import {Team} from '../team';
+import {Router} from '@angular/router';
 
 export interface Model {
   nameSpieler1: string;
@@ -30,9 +30,9 @@ export class TeamsComponent {
   }
 
   onSubmit() {
-    console.log('on submit');
+    // console.log('on submit');
     const model: Model = this.teamForm.value;
-    console.log(this.teamForm.value);
+    // console.log(this.teamForm.value);
     this.spielerdaten.Team1 = { spieler1: { name: model.nameSpieler1 }, spieler2: { name: model.nameSpieler2 } } as Team;
     this.spielerdaten.Team2 = { spieler1: { name: model.nameSpieler3 }, spieler2: { name: model.nameSpieler4 } } as Team;
 
