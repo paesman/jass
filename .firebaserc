@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "jass-backend": {
+      "hosting": {
+        "jass": [
+          "jass-backend"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "jass-backend"
+  }
+}
