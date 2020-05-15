@@ -1,4 +1,4 @@
-# Jass
+# Jass  ![CI](https://github.com/paesman/jass/workflows/CI/badge.svg)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.9.
 
