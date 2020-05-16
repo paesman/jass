@@ -6,6 +6,7 @@ import {TeamsComponent} from './teams/teams.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 import {SpielweiseComponent} from './spielweise/spielweise.component';
+import {JassteppichComponent} from './jassteppich/jassteppich.component';
 
 const appRoutes: Routes = [
   // { path: 'crisis-center', component: CrisisListComponent },
@@ -18,6 +19,10 @@ const appRoutes: Routes = [
     path: 'spielweise',
     component: SpielweiseComponent
   },
+  {
+    path: 'jassteppich',
+    component: JassteppichComponent
+  },
   { path: '',
     redirectTo: '/jass',
     pathMatch: 'full'
@@ -29,7 +34,8 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     TeamsComponent,
-    SpielweiseComponent
+    SpielweiseComponent,
+    JassteppichComponent
   ],
   imports: [
     RouterModule.forRoot(

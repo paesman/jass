@@ -36,7 +36,7 @@ export class TeamsComponent {
     this.spielerdaten.Team1 = { spieler1: { name: model.nameSpieler1 }, spieler2: { name: model.nameSpieler2 } } as Team;
     this.spielerdaten.Team2 = { spieler1: { name: model.nameSpieler3 }, spieler2: { name: model.nameSpieler4 } } as Team;
 
-    this.router.navigate(['/spielweise']);
+    this.router.navigate(['/jassteppich']);
   }
 }
 
