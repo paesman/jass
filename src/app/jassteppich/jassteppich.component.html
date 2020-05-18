@@ -1,3 +1,29 @@
-<body class="bg-img">
-login page goes here
-</body>
+<div class="grid-container">
+
+  <div></div>
+  <div>
+    <img class="card" src="assets/karten/kreuz_ass.jpg">
+  </div>
+  <div></div>
+
+  <div style="justify-self: end;">
+    <img class="card" src="assets/karten/herz_ass.jpg">
+  </div>
+  <div></div>
+  <div style="justify-self: start">
+    <img class="card" src="assets/karten/ecke_ass.jpg">
+  </div>
+
+  <div></div>
+  <div>
+    <img *ngIf="karteCurrentPlayer" class="card" src="assets/karten/{{karteCurrentPlayer.bildName}}">
+  </div>
+  <div></div>
+
+</div>
+
+<div class="card-row">
+  <div class="card-column" *ngFor="let karte of karten">
+    <img class="card" src="/assets/karten/{{karte.bildName}}" (click)="onClick(karte)">
+  </div>
+</div>

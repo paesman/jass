@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {Karte} from "../karte";
+import {KartenService} from "../services/karten.service";
 
 @Component({
   selector: 'app-jassteppich',
@@ -7,9 +9,24 @@ import {Component, OnInit} from '@angular/core';
 })
 export class JassteppichComponent implements OnInit {
 
-  constructor() { }
+  karten: Karte[];
+  karteCurrentPlayer: Karte;
+
+  constructor(private kartenService: KartenService) { }
 
   ngOnInit(): void {
+    this.getKarten();
   }
 
+  getKarten(): void {
+    this.kartenService.getSpielerKarten().subscribe(karten => this.karten = karten);
+  }
+
+  onClick(karte: Karte) {
+    this.karteCurrentPlayer = karte;
+    const index: number = this.karten.indexOf(karte);
+    if (index !== -1) {
+      this.karten.splice(index, 1)
+    }
+  }
 }
