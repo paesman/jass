@@ -1,12 +1,8 @@
-import { PathReporter } from "io-ts/lib/PathReporter";
-import { left } from "fp-ts/lib/Either";
-import { tryCatch, getOrElse } from "fp-ts/lib/Option";
 import { unionize, ofType } from "unionize";
-import { Errors } from "io-ts";
 
 export const ErrorTypes = unionize({
-  UnexpectedError: ofType<Error>(),
-  DecodeError: ofType<Errors>(),
+  BadRequest: ofType<Error>(),
+  UnexpectedError: ofType<Error>()
 });
 
 export type ErrorTypes = typeof ErrorTypes._Union;
@@ -31,10 +27,5 @@ export const InternalServerError = (error: any) =>
 export const toHttpResult = (error: ErrorTypes) =>
   ErrorTypes.match(error, {
     UnexpectedError: (e) => InternalServerError(e),
-    DecodeError: (e) =>
-      BadRequest(
-        `Input contract is not valid!: ${getOrElse(() => "malformed request")(
-          tryCatch(() => PathReporter.report(left(e)).join("\n"))
-        )}`
-      ),
+    BadRequest: (e) => BadRequest(`Action is not valid! ${e.message}`)
   });

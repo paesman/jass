@@ -3,9 +3,17 @@ import * as firebase from "firebase"; // Your web app's Firebase configuration
 
 import { Actions } from "./actions";
 // tslint:disable-next-line: no-duplicate-imports
-import { chain, tryCatch, map, right } from "fp-ts/lib/TaskEither";
-import { ErrorTypes } from "./errortypes";
-import { tryCatchR } from "./fp-utils";
+import {
+  chain,
+  tryCatch,
+  map,
+  right,
+  mapLeft,
+  fold,
+} from "fp-ts/lib/TaskEither";
+import { ErrorTypes, toHttpResult, HttpResult } from "./errortypes";
+import { tryCatchR, isEmpty } from "./utils";
+import { of } from "fp-ts/lib/Task";
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -26,73 +34,110 @@ firebase.initializeApp(firebaseConfig);
 // Get a reference to the database service
 const database = firebase.database();
 
-interface Card {
-  id: number;
-  color: "red" | "black";
-}
-
 interface GameState {
-  players: {
+  players?: {
     [playerId: string]: {
-      cards: Card[];
+      cards: number[];
     };
   };
-  currentMove: Card[];
+  currentMove?: number[];
   score?: number;
   error?: string; // TODO: different error types
 }
 
-export const setState = (gameId: string, state: GameState) =>
-  database.ref("games/" + gameId).set(state);
+type Combined = { action: Actions; state: GameState };
 
-export const setStateR = (gameId: string, state: GameState) =>
-  tryCatch(
-    () => setState(gameId, state),
-    (err) => ErrorTypes.UnexpectedError(err as Error)
-  );
+const initialState: GameState = {
+  players: {},
+  currentMove: [],
+  score: 0
+};
 
-export const readState = (gameId: string) =>
+const setState = (gameId: string, state: GameState) => {
+  return database.ref("games/" + gameId).set(state);
+};
+
+const readState = (gameId: string) =>
   database
     .ref("games/" + gameId)
     .once("value")
     .then((snapshot) => snapshot.val() || {}) as Promise<GameState>;
 
-export const readStateR = (gameId: string) =>
-  tryCatch(
-    () => readState(gameId),
-    (err) => ErrorTypes.UnexpectedError(err as Error)
-  );
-
-export const reducerFunction = (state: any, action: Actions) => {
-  return Actions.match(action, {
-    JoinGame: (a) => state,
-    PlayCard: (a) => state,
-    StartGame: (a) => state,
-    default: (a) =>  { throw new Error(`Unknown Action ${a}`) }
+const reducerFunction = (state: GameState, action: Actions) =>
+  Actions.match(action, {
+    JoinGame: (a) => {
+      if (isEmpty(state)) {
+        throw new Error(
+          `Game does not exist!, You can create a new game if you want.`
+        );
+      } else {
+        return {
+          ...state,
+          players: { ...state.players, [a.playerName]: { cards: [1, 2, 3] } },
+        } as GameState;
+      }
+    },
+    StartGame: (a) => {
+      if (!isEmpty(state)) {
+        throw new Error(
+          "Game already exists!, You can join that game if you want."
+        );
+      } else {
+        return {
+          ...initialState,
+          players: { [a.playerName]: { cards: [1, 2, 3] } },
+        } as GameState;
+      }
+    },
+    PlayCard: (a) => {
+      if (isEmpty(state)) {
+        throw new Error(`No such game with id: ${a.gameId} exists!`);
+      } else {
+        return {
+          ...state,
+          currentMove: state.currentMove ? [...state.currentMove, a.card] : [a.card]
+        } as GameState;
+      }
+    },
+    default: (a) => {
+      throw new Error(`Unknown Action ${a}`);
+    },
   });
-};
 
-const reducerFunctionR = (state: any, action: Actions) =>
-  tryCatchR(
-    () => reducerFunction(state, action),
-    (err) => ErrorTypes.UnexpectedError(err)
-  );
-
-type Mixed = { action: Actions; state: GameState };
-
-export const reducer = functions.https.onRequest((request, response) => {
-  return chain<ErrorTypes, GameState, Mixed>((state) =>
-    setStateR(request.body.gameId, state)
+export const dispatch = functions.https.onRequest((request, response) =>
+  fold(
+    (l: HttpResult) => of(response.status(l.statusCode).send(l.payload)),
+    (r: Combined) => of(response.send(r))
   )(
-    chain<ErrorTypes, Mixed, GameState>((d) =>
-      reducerFunctionR(d.state, d.action)
-    )(
-      chain<ErrorTypes, Actions, Mixed>((action) =>
-        map<GameState, Mixed>((state) => ({ state, action } as Mixed))(
-          readStateR(action.gameId)
+    mapLeft<ErrorTypes, HttpResult>(toHttpResult)(
+      chain<ErrorTypes, Combined, Combined>((comb) =>
+        map<void, Combined>(() => comb)(
+          tryCatch(
+            () => setState(comb.action.gameId, comb.state),
+            (err) => ErrorTypes.UnexpectedError(err as Error)
+          )
         )
-      )(right(request.body))
-      //(decode(Actions)(request.body))
+      )(
+        chain<ErrorTypes, Combined, Combined>((comb) =>
+          map<GameState, Combined>((state) => ({ ...comb, state }))(
+            tryCatchR(
+              () => reducerFunction(comb.state, comb.action),
+              (err) => ErrorTypes.BadRequest(err)
+            )
+          )
+        )(
+          chain<ErrorTypes, Actions, Combined>((action) =>
+            map<GameState, Combined>(
+              (state) => ({ state, action } as Combined)
+            )(
+              tryCatch(
+                () => readState(action.gameId),
+                (err) => ErrorTypes.UnexpectedError(err as Error)
+              )
+            )
+          )(right(request.body))
+        )
+      )
     )
-  );
-});
+  )().catch((err) => response.status(500).send(err))
+);

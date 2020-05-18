@@ -12,7 +12,7 @@ export interface StartGame {
 
 export interface PlayCard {
   gameId: string;
-  playerName: string;
+  player: string;
   card: number;
 }
 

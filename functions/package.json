@@ -7,7 +7,8 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "debug": "npm run build && firebase emulators:start --inspect-functions"
   },
   "engines": {
     "node": "8"
@@ -18,7 +19,6 @@
     "firebase-admin": "^8.12.1",
     "firebase-functions": "^3.6.1",
     "fp-ts": "^2.6.1",
-    "io-ts": "^2.2.2",
     "unionize": "^3.1.0"
   },
   "devDependencies": {
