@@ -1,0 +1,17 @@
+<form [formGroup]="startForm">
+  <div>
+      <label>
+        <label for="gameId">Game Name</label>
+        <input id="gameId" type="text" formControlName="gameId" placeholder="Insert a unique name for a new game">
+        <br/>
+        <label for="playerName">Player Name</label>
+        <input id="playerName" type="text" formControlName="playerName" placeholder="Insert your nickname">
+      </label>
+  </div>
+  <div>
+    <button [disabled]="!startForm.valid" (click)="startGame()">Start Game</button>
+    <button [disabled]="!startForm.valid" (click)="joinGame()">Join Game</button>
+  </div>
+</form>
+
+{{startForm.valid}}

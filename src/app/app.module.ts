@@ -3,13 +3,20 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {TeamsComponent} from './teams/teams.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 import {SpielweiseComponent} from './spielweise/spielweise.component';
+import { StartContainerComponent } from './start/start.container.component';
+import { Store } from './state/store';
+import { HttpClientModule } from '@angular/common/http';
 
 const appRoutes: Routes = [
   // { path: 'crisis-center', component: CrisisListComponent },
   // { path: 'hero/:id',      component: HeroDetailComponent },
+  {
+    path: 'start',
+    component: StartContainerComponent
+  },
   {
     path: 'jass',
     component: TeamsComponent
@@ -29,7 +36,8 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     TeamsComponent,
-    SpielweiseComponent
+    SpielweiseComponent,
+    StartContainerComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -37,9 +45,11 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     ),
     BrowserModule,
+    HttpClientModule,
+    FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [Store],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
