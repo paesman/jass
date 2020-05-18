@@ -1,5 +1,8 @@
 import * as functions from "firebase-functions";
 import * as firebase from "firebase"; // Your web app's Firebase configuration
+import { GameState } from "../../shared/state";
+import * as cors from "cors";
+const corsHandler = cors({ origin: true });
 
 import { Actions } from "./actions";
 // tslint:disable-next-line: no-duplicate-imports
@@ -34,23 +37,12 @@ firebase.initializeApp(firebaseConfig);
 // Get a reference to the database service
 const database = firebase.database();
 
-interface GameState {
-  players?: {
-    [playerId: string]: {
-      cards: number[];
-    };
-  };
-  currentMove?: number[];
-  score?: number;
-  error?: string; // TODO: different error types
-}
-
 type Combined = { action: Actions; state: GameState };
 
 const initialState: GameState = {
   players: {},
   currentMove: [],
-  score: 0
+  score: 0,
 };
 
 const setState = (gameId: string, state: GameState) => {
@@ -95,7 +87,9 @@ const reducerFunction = (state: GameState, action: Actions) =>
       } else {
         return {
           ...state,
-          currentMove: state.currentMove ? [...state.currentMove, a.card] : [a.card]
+          currentMove: state.currentMove
+            ? [...state.currentMove, a.card]
+            : [a.card],
         } as GameState;
       }
     },
@@ -105,39 +99,47 @@ const reducerFunction = (state: GameState, action: Actions) =>
   });
 
 export const dispatch = functions.https.onRequest((request, response) =>
-  fold(
-    (l: HttpResult) => of(response.status(l.statusCode).send(l.payload)),
-    (r: Combined) => of(response.send(r))
-  )(
-    mapLeft<ErrorTypes, HttpResult>(toHttpResult)(
-      chain<ErrorTypes, Combined, Combined>((comb) =>
-        map<void, Combined>(() => comb)(
-          tryCatch(
-            () => setState(comb.action.gameId, comb.state),
-            (err) => ErrorTypes.UnexpectedError(err as Error)
-          )
-        )
-      )(
+  corsHandler(request, response, () =>
+    fold(
+      (l: HttpResult) =>
+        of(
+          response
+            .set("Access-Control-Allow-Origin", "*")
+            .status(l.statusCode)
+            .send(l.payload)
+        ),
+      (r: Combined) => of(response.send(r))
+    )(
+      mapLeft<ErrorTypes, HttpResult>(toHttpResult)(
         chain<ErrorTypes, Combined, Combined>((comb) =>
-          map<GameState, Combined>((state) => ({ ...comb, state }))(
-            tryCatchR(
-              () => reducerFunction(comb.state, comb.action),
-              (err) => ErrorTypes.BadRequest(err)
+          map<void, Combined>(() => comb)(
+            tryCatch(
+              () => setState(comb.action.gameId, comb.state),
+              (err) => ErrorTypes.UnexpectedError(err as Error)
             )
           )
         )(
-          chain<ErrorTypes, Actions, Combined>((action) =>
-            map<GameState, Combined>(
-              (state) => ({ state, action } as Combined)
-            )(
-              tryCatch(
-                () => readState(action.gameId),
-                (err) => ErrorTypes.UnexpectedError(err as Error)
+          chain<ErrorTypes, Combined, Combined>((comb) =>
+            map<GameState, Combined>((state) => ({ ...comb, state }))(
+              tryCatchR(
+                () => reducerFunction(comb.state, comb.action),
+                (err) => ErrorTypes.BadRequest(err)
               )
             )
-          )(right(request.body))
+          )(
+            chain<ErrorTypes, Actions, Combined>((action) =>
+              map<GameState, Combined>(
+                (state) => ({ state, action } as Combined)
+              )(
+                tryCatch(
+                  () => readState(action.gameId),
+                  (err) => ErrorTypes.UnexpectedError(err as Error)
+                )
+              )
+            )(right(request.body))
+          )
         )
       )
-    )
-  )().catch((err) => response.status(500).send(err))
+    )().catch((err) => response.status(500).send(err))
+  )
 );
