@@ -9,6 +9,7 @@ import {SpielweiseComponent} from './spielweise/spielweise.component';
 import { StartContainerComponent } from './start/start.container.component';
 import { Store } from './state/store';
 import { HttpClientModule } from '@angular/common/http';
+import {JassteppichComponent} from './jassteppich/jassteppich.component';
 
 const appRoutes: Routes = [
   // { path: 'crisis-center', component: CrisisListComponent },
@@ -25,6 +26,10 @@ const appRoutes: Routes = [
     path: 'spielweise',
     component: SpielweiseComponent
   },
+  {
+    path: 'jassteppich',
+    component: JassteppichComponent
+  },
   { path: '',
     redirectTo: '/jass',
     pathMatch: 'full'
@@ -37,7 +42,8 @@ const appRoutes: Routes = [
     AppComponent,
     TeamsComponent,
     SpielweiseComponent,
-    StartContainerComponent
+    StartContainerComponent,
+    JassteppichComponent
   ],
   imports: [
     RouterModule.forRoot(

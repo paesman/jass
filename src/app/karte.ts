@@ -1,9 +1,4 @@
-import {Farbe} from "./farbe.enum";
-
 export interface Karte {
-  name: string;
-  farbe: Farbe;
-  rang: number;
-  wert: number;
+  id: number;
   bildName: string;
 }

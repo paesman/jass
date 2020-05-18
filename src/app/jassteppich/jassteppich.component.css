@@ -1,0 +1,31 @@
+/** {*/
+/*  box-sizing: border-box;*/
+/*}*/
+
+.grid-container {
+  display: grid;
+  align-content: center;
+  grid-template-columns: auto 250px auto;
+  background-image: url('/assets/jassteppich.jpg');
+  height: 70vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card-row {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  bottom: 30px;
+  left: 20%;
+}
+
+.card-column {
+  margin-right: 5px;
+}
+
+.card {
+  height: 20vh;
+  border: 1px solid black;
+}
