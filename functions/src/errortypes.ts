@@ -3,6 +3,9 @@ import { unionize, ofType } from "unionize";
 export const ErrorTypes = unionize({
   BadRequest: ofType<Error>(),
   UnexpectedError: ofType<Error>()
+}, {
+  tag: "tag",
+  value: "payload"
 });
 
 export type ErrorTypes = typeof ErrorTypes._Union;
