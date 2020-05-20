@@ -36,7 +36,7 @@ export class Store {
       mergeMap((action) =>
         this.httpClient
           .post(
-            'http://localhost:5001/jass-backend/us-central1/dispatch',
+            'https://us-central1-jass-backend.cloudfunctions.net/dispatch',
             action
           )
           .pipe(
