@@ -1,11 +1,11 @@
-import { Component, Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Actions } from 'functions/src/actions';
 import { HttpClient } from '@angular/common/http';
 import { ReplaySubject, Observable } from 'rxjs';
-import { GameState } from 'shared/state';
 import { tap, filter, map, mergeMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
+import { GameState } from 'functions/src/state';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8rdKbdHnLZVAkET8-W_bKDhszxnDdqWc',
@@ -36,7 +36,7 @@ export class Store {
       mergeMap((action) =>
         this.httpClient
           .post(
-            'https://us-central1-jass-backend.cloudfunctions.net/dispatch',
+            'http://localhost:5001/jass-backend/us-central1/dispatch',
             action
           )
           .pipe(
