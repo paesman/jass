@@ -10,6 +10,7 @@ import { StartContainerComponent } from './start/start.container.component';
 import { Store } from './state/store';
 import { HttpClientModule } from '@angular/common/http';
 import {JassteppichComponent} from './jassteppich/jassteppich.component';
+import { VisualizeStateComponent } from './visualize/visualize-state.container.component';
 
 const appRoutes: Routes = [
   // { path: 'crisis-center', component: CrisisListComponent },
@@ -17,6 +18,10 @@ const appRoutes: Routes = [
   {
     path: 'start',
     component: StartContainerComponent
+  },
+  {
+    path: 'visualizeState',
+    component: VisualizeStateComponent
   },
   {
     path: 'jass',
@@ -43,7 +48,8 @@ const appRoutes: Routes = [
     TeamsComponent,
     SpielweiseComponent,
     StartContainerComponent,
-    JassteppichComponent
+    JassteppichComponent,
+    VisualizeStateComponent
   ],
   imports: [
     RouterModule.forRoot(
