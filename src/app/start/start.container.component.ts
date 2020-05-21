@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Actions } from 'functions/src/actions';
 import { Store } from '../state/store';
+import { Router } from '@angular/router';
 
 
 interface Model {
@@ -17,7 +18,10 @@ export class StartContainerComponent {
 
   startForm: FormGroup;
 
-  constructor(private store: Store, private builder: FormBuilder) {
+  constructor(
+    private store: Store,
+    private builder: FormBuilder,
+    private router: Router) {
     this.startForm = this.builder.group({
       gameId: this.builder.control('', [Validators.required]),
       playerName: this.builder.control('', [Validators.required])
@@ -26,9 +30,11 @@ export class StartContainerComponent {
 
   joinGame() {
     this.store.dispatch(Actions.JoinGame(this.startForm.value));
+    this.router.navigate(['visualizeState']);
   }
 
   startGame() {
     this.store.dispatch(Actions.StartGame(this.startForm.value));
+    this.router.navigate(['visualizeState']);
   }
 }

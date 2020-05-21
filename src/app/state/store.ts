@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Actions } from 'functions/src/actions';
 import { HttpClient } from '@angular/common/http';
 import { ReplaySubject, Observable } from 'rxjs';
@@ -22,38 +22,43 @@ firebase.initializeApp(firebaseConfig);
 // Get a reference to the database service
 const database = firebase.database();
 
+interface Result { action: Actions; state: GameState };
+
 @Injectable()
 export class Store {
-  model$ = new ReplaySubject<GameState>();
+  model$ = new ReplaySubject<GameState>(1);
   gameId$: Observable<string>;
 
   action$ = new EventEmitter<Actions>();
   actionDispatched$: Observable<any>;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private ngZone: NgZone) {
     this.gameId$ = this.action$.pipe(
-      tap(a => console.log(a)),
       mergeMap((action) =>
         this.httpClient
-          .post(
+          .post<Result>(
             'https://us-central1-jass-backend.cloudfunctions.net/dispatch',
             action
           )
           .pipe(
-            filter(Actions.is.StartGame || Actions.is.JoinGame),
-            map(() => action.gameId)
+            map((result) => result.action),
+            filter((a) => Actions.is.JoinGame(a) || Actions.is.StartGame(a)),
+            map(() => action.gameId),
           )
       )
     );
 
     this.gameId$
       .pipe(
-        tap(() => console.log('hfdkjshdkh')),
-        tap((id) => database.ref('games/' + id).off()),
         tap((id) =>
           database
             .ref('games/' + id)
-            .on('value', (snapshot) => this.model$.next(snapshot.val()))
+            .off('value', (snapshot) => this.ngZone.run(() => this.model$.next(snapshot.val())))
+        ),
+        tap((id) =>
+          database
+            .ref('games/' + id)
+            .on('value', (snapshot) => this.ngZone.run(() => this.model$.next(snapshot.val())))
         )
       )
       .subscribe();
