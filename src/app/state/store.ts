@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Actions } from 'functions/src/actions';
 import { HttpClient } from '@angular/common/http';
 import { ReplaySubject, Observable } from 'rxjs';
-import { tap, filter, map, mergeMap } from 'rxjs/operators';
+import { tap, filter, map, mergeMap, distinctUntilChanged } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
 import { GameState } from 'functions/src/state';
@@ -44,6 +44,7 @@ export class Store {
             map((result) => result.action),
             filter((a) => Actions.is.JoinGame(a) || Actions.is.StartGame(a)),
             map(() => action.gameId),
+            distinctUntilChanged((prev, next) => prev === next)
           )
       )
     );
@@ -53,7 +54,7 @@ export class Store {
         tap((id) =>
           database
             .ref('games/' + id)
-            .off('value', (snapshot) => this.ngZone.run(() => this.model$.next(snapshot.val())))
+            .off()
         ),
         tap((id) =>
           database
