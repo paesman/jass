@@ -13,6 +13,7 @@ interface Model {
 @Component({
   templateUrl: './start.container.component.html',
   selector: 'app-start',
+  styleUrls: ['./start.container.component.css']
 })
 export class StartContainerComponent {
 

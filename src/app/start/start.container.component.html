@@ -1,17 +1,18 @@
-<form [formGroup]="startForm">
-  <div>
-      <label>
-        <label for="gameId">Game Name</label>
-        <input id="gameId" type="text" formControlName="gameId" placeholder="Insert a unique name for a new game">
-        <br/>
-        <label for="playerName">Player Name</label>
-        <input id="playerName" type="text" formControlName="playerName" placeholder="Insert your nickname">
-      </label>
-  </div>
-  <div>
-    <button [disabled]="!startForm.valid" (click)="startGame()">Start Game</button>
-    <button [disabled]="!startForm.valid" (click)="joinGame()">Join Game</button>
-  </div>
-</form>
-
-{{startForm.valid}}
+<div class="start-form">
+  <form [formGroup]="startForm">
+    <h1>Wiukommä zum Jass</h1>
+    <div>
+      <label for="gameId">Namä vom Spiu</label>
+      <input id="gameId" type="text" formControlName="gameId" placeholder="Insert a unique name for a new game">
+      <br />
+      <label for="playerName">Wiä isch di namä?</label>
+      <input id="playerName" type="text" formControlName="playerName" placeholder="Insert your nickname">
+    </div>
+    <div>
+      <button type="button" class="btn btn-primary button" [disabled]="!startForm.valid" (click)="startGame()">Start äs nöis
+        Spiu</button>
+      <button type="button" class="btn btn-secondary button" [disabled]="!startForm.valid" (click)="joinGame()">Tritt am nä
+        Spiu bi</button>
+    </div>
+  </form>
+</div>

@@ -11,6 +11,7 @@ import { Store } from './state/store';
 import { HttpClientModule } from '@angular/common/http';
 import {JassteppichComponent} from './jassteppich/jassteppich.component';
 import { VisualizeStateComponent } from './visualize/visualize-state.container.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const appRoutes: Routes = [
   // { path: 'crisis-center', component: CrisisListComponent },
@@ -59,7 +60,8 @@ const appRoutes: Routes = [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule
   ],
   providers: [Store],
   bootstrap: [AppComponent]

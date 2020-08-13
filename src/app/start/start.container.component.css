@@ -1,0 +1,13 @@
+.start-form {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+label {
+  padding: 10px;
+}
+
+.button {
+  margin: 10px !important;
+}
