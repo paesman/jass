@@ -13,6 +13,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "@firebase/app",
+              "firebase/app",
+              "@firebase/database",
+              "@firebase/util",
+              "@firebase/component",
+              "@firebase/auth"
+            ],
             "aot": true,
             "outputPath": "dist/jass",
             "index": "src/index.html",
@@ -26,8 +34,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "scripts": []
           },
           "configurations": {
             "production": {
