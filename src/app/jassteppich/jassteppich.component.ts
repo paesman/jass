@@ -1,32 +1,47 @@
-import {Component, OnInit} from '@angular/core';
-import {Karte} from "../karte";
-import {KartenService} from "../services/karten.service";
+import { Component, EventEmitter } from '@angular/core';
+import { Store } from '../state/store';
+import { Observable } from 'rxjs';
+import { withLatestFrom } from 'rxjs/operators';
+import { Actions } from 'functions/src/actions';
+import { GameState } from 'functions/src/state';
 
 @Component({
   selector: 'app-jassteppich',
   templateUrl: './jassteppich.component.html',
-  styleUrls: ['./jassteppich.component.css']
+  styleUrls: ['./jassteppich.component.css'],
 })
-export class JassteppichComponent implements OnInit {
+export class JassteppichComponent {
 
-  karten: Karte[];
-  karteCurrentPlayer: Karte;
+  cards$: Observable<number[]>; // The users cards
+  model$: Observable<GameState>; // The full state of the Game
 
-  constructor(private kartenService: KartenService) { }
+  playCardClicked$ = new EventEmitter<number>();
 
-  ngOnInit(): void {
-    this.getKarten();
-  }
+  constructor(private store: Store) {
+    this.model$ = this.store.model$;
 
-  getKarten(): void {
-    this.kartenService.getSpielerKarten().subscribe(karten => this.karten = karten);
-  }
+    this.cards$ = this.store.model$.pipe(
+      withLatestFrom(
+        this.store.gameInfo$,
+        (model, gameInfo) => model.players[gameInfo.playerName].cards
+      )
+    );
 
-  onClick(karte: Karte) {
-    this.karteCurrentPlayer = karte;
-    const index: number = this.karten.indexOf(karte);
-    if (index !== -1) {
-      this.karten.splice(index, 1)
-    }
+    this.playCardClicked$
+      .pipe(
+        withLatestFrom(this.store.gameInfo$, (playedCard, gameInfo) => ({
+          playedCard,
+          gameInfo,
+        }))
+      )
+      .subscribe((context) =>
+        this.store.dispatch(
+          Actions.PlayCard({
+            card: context.playedCard,
+            gameId: context.gameInfo.gameId,
+            playerName: context.gameInfo.playerName,
+          })
+        )
+      );
   }
 }

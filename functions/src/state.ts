@@ -1,10 +1,12 @@
+export interface Move { playerName: number, card: number; }
+
 export interface GameState {
-  players?: {
-    [playerId: string]: {
-      cards: number[];
+  players: {
+    [playerName: string]: {
+      cards: number[]
     };
   };
-  currentMove?: number[];
+  currentMove?: Move[];
   score?: number;
   error?: string; // TODO: different error types
 }

@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Actions } from 'functions/src/actions';
 import { HttpClient } from '@angular/common/http';
 import { ReplaySubject, Observable } from 'rxjs';
-import { tap, filter, map, mergeMap, distinctUntilChanged } from 'rxjs/operators';
+import { tap, filter, map, mergeMap, distinctUntilChanged, publishReplay, refCount } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
 import { GameState } from 'functions/src/state';
@@ -22,47 +22,50 @@ firebase.initializeApp(firebaseConfig);
 // Get a reference to the database service
 const database = firebase.database();
 
-interface Result { action: Actions; state: GameState };
+interface Result { action: Actions; state: GameState; }
+
+export interface GameInfo { gameId: string; playerName: string; };
 
 @Injectable()
 export class Store {
   model$ = new ReplaySubject<GameState>(1);
-  gameId$: Observable<string>;
+  gameInfo$: Observable<GameInfo>;
 
   action$ = new EventEmitter<Actions>();
   actionDispatched$: Observable<any>;
 
   constructor(private httpClient: HttpClient, private ngZone: NgZone) {
-    this.gameId$ = this.action$.pipe(
+    this.gameInfo$ = this.action$.pipe(
       mergeMap((action) =>
         this.httpClient
           .post<Result>(
-            'https://us-central1-jass-backend.cloudfunctions.net/dispatch',
+             'https://us-central1-jass-backend.cloudfunctions.net/dispatch',
+            // 'http://localhost:5001/jass-backend/us-central1/dispatch',
             action
           )
           .pipe(
             map((result) => result.action),
-            filter((a) => Actions.is.JoinGame(a) || Actions.is.StartGame(a)),
-            map(() => action.gameId),
+            filter((actionR) => Actions.is.JoinGame(actionR) || Actions.is.StartGame(actionR)),
+            map((actionR) => ({gameId: actionR.gameId, playerName: actionR.playerName})),
             distinctUntilChanged((prev, next) => prev === next)
           )
-      )
+      ),
+      publishReplay(1), refCount()
     );
 
-    this.gameId$
+    this.gameInfo$
       .pipe(
-        tap((id) =>
+        tap((info) =>
           database
-            .ref('games/' + id)
+            .ref('games/' + info.gameId)
             .off()
         ),
-        tap((id) =>
+        tap((info) =>
           database
-            .ref('games/' + id)
+            .ref('games/' + info.gameId)
             .on('value', (snapshot) => this.ngZone.run(() => this.model$.next(snapshot.val())))
         )
-      )
-      .subscribe();
+      ).subscribe();
   }
 
   dispatch(action: Actions) {

@@ -11,3 +11,13 @@ label {
 .button {
   margin: 10px !important;
 }
+
+.background-image {
+  background-image: url(/assets/images/jass.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+}
+

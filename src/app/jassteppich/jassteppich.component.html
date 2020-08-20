@@ -1,29 +1,35 @@
-<div class="grid-container">
+<ng-container *ngIf="model$ | async; let model">
 
-  <div></div>
-  <div>
-    <img class="card" src="assets/karten/kreuz_ass.jpg">
-  </div>
-  <div></div>
+  <div class="grid-container">
 
-  <div style="justify-self: end;">
-    <img class="card" src="assets/karten/herz_ass.jpg">
-  </div>
-  <div></div>
-  <div style="justify-self: start">
-    <img class="card" src="assets/karten/ecke_ass.jpg">
+    <div></div>
+    <div style="display: flex; flex-direction: row; justify-content: center;">
+      <img class="card" src="assets/karten/5.jpg" alt="">
+    </div>
+    <div></div>
+
+    <div style="justify-self: end;">
+      <img class="card" src="assets/karten/36.jpg" alt="">
+    </div>
+    <div></div>
+    <div style="justify-self: start">
+      <img class="card" src="assets/karten/9.jpg" alt="">
+    </div>
+
+    <div></div>
+    <div style="display: flex; flex-direction: row; justify-content: center;">
+      <img class="card" src="assets/karten/15.jpg" alt="">
+    </div>
+    <div></div>
+
   </div>
 
-  <div></div>
-  <div>
-    <img *ngIf="karteCurrentPlayer" class="card" src="assets/karten/{{karteCurrentPlayer.bildName}}">
+  <div class="card-row" *ngIf="cards$ | async, let cards">
+    <div class="card-column" *ngFor="let card of cards">
+      <img class="card" src="/assets/karten/{{card}}.jpg" (click)="playCardClicked$.emit(card)" alt="">
+    </div>
   </div>
-  <div></div>
 
-</div>
+</ng-container>
 
-<div class="card-row">
-  <div class="card-column" *ngFor="let karte of karten">
-    <img class="card" src="/assets/karten/{{karte.bildName}}" (click)="onClick(karte)">
-  </div>
-</div>
+{{ model$ | async | json }}

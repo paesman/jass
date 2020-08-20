@@ -31,11 +31,11 @@ export class StartContainerComponent {
 
   joinGame() {
     this.store.dispatch(Actions.JoinGame(this.startForm.value));
-    this.router.navigate(['visualizeState']);
+    this.router.navigate(['jassteppich']);
   }
 
   startGame() {
     this.store.dispatch(Actions.StartGame(this.startForm.value));
-    this.router.navigate(['visualizeState']);
+    this.router.navigate(['jassteppich']);
   }
 }
