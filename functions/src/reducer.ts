@@ -11,12 +11,11 @@ const nextPlayerIndex = (state: GameState) =>
     )
   ) + 1;
 
-const assignTeam = (index: number) =>
-  index % 2 ? 2 : 1
+const assignTeam = (index: number) => (index % 2 ? 2 : 1);
 
 const initialState: GameState = {
   players: {},
-  currentMove: [],
+  currentMove: {},
   score: 0,
 };
 
@@ -35,7 +34,11 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...state,
             players: {
               ...state.players,
-              [a.playerName]: { cards: [1, 2, 3], team: assignTeam(nextPlayerIndex(state)), index: nextPlayerIndex(state) },
+              [a.playerName]: {
+                cards: [1, 2, 3],
+                team: assignTeam(nextPlayerIndex(state)),
+                index: nextPlayerIndex(state),
+              },
             },
           } as GameState),
     StartGame: (a) =>
@@ -49,7 +52,13 @@ export const reducerFunction = (state: GameState, action: Actions) =>
           )
         : right({
             ...initialState,
-            players: { [a.playerName]: { cards: [1, 2, 3], team: 1, index: 0 } },
+            players: {
+              [a.playerName]: {
+                cards: { "1": 1, "2": 2, "3": 3 },
+                team: 1,
+                index: 0,
+              },
+            },
           } as GameState),
     PlayCard: (a) =>
       isEmpty(state)
@@ -61,11 +70,30 @@ export const reducerFunction = (state: GameState, action: Actions) =>
         : right({
             ...state,
             currentMove: state.currentMove
-              ? {...state.currentMove, [state.players[a.playerName].index]: a.card }
+              ? {
+                  ...state.currentMove,
+                  [state.players[a.playerName].index]: a.card,
+                }
               : { [state.players[a.playerName].index]: a.card },
             players: {
               ...state.players,
-              [a.playerName]: { ...state.players[a.playerName], cards: state.players[a.playerName].cards.filter(c => c !== a.card) || [] } }
+              [a.playerName]: {
+                ...state.players[a.playerName],
+                cards: {
+                  ...Object.keys(state.players[a.playerName].cards).reduce(
+                    (acc, curr) => {
+                      return state.players[a.playerName].cards[curr] === a.card
+                        ? { ...acc }
+                        : {
+                            ...acc,
+                            [curr]: state.players[a.playerName].cards[curr],
+                          };
+                    },
+                    {}
+                  ),
+                },
+              },
+            },
           } as GameState),
     default: (a) =>
       left(ErrorTypes.BadRequest(new Error(`Unknown Action ${a}`))),
