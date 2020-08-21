@@ -61,7 +61,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
         : right({
             ...state,
             currentMove: state.currentMove
-              ? [...state.currentMove, { card: a.card, playerName: a.playerName }]
+              ? [...state.currentMove, { card: a.card, playerIndex: state.players[a.playerName].index }]
               : [{ card: a.card, playerName: action.playerName }],
             players: {
               ...state.players,
