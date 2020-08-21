@@ -65,7 +65,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
               : [{ card: a.card, playerName: action.playerName }],
             players: {
               ...state.players,
-              [a.playerName]: { cards: state.players[a.playerName].cards.filter(c => c !== a.card) } }
+              [a.playerName]: { ...state.players[a.playerName], cards: state.players[a.playerName].cards.filter(c => c !== a.card) || [] } }
           } as GameState),
     default: (a) =>
       left(ErrorTypes.BadRequest(new Error(`Unknown Action ${a}`))),
