@@ -1,4 +1,4 @@
-export interface Moves { [playerIndex: string]: number; }
+export interface Moves { [index: number]: number; }
 export interface Cards { [index: number]: number }
 
 export interface GameState {

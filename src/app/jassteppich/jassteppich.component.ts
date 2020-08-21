@@ -18,7 +18,7 @@ export class JassteppichComponent {
 
   playCardClicked$ = new EventEmitter<number>();
   playerIndexNameMap$: Observable<{ [playerIndex: number]: string }>;
-  playedCardsMap$: Observable<{ [playerIndex: number]: number }>;
+  playedCards$: Observable<{ [playerIndex: number]: number }>;
 
   constructor(private store: Store) {
     this.model$ = this.store.model$;
@@ -32,15 +32,15 @@ export class JassteppichComponent {
       )
     );
 
-    this.playedCardsMap$ = this.store.model$.pipe(
-      map((model) => model.currentMove)
+    this.playedCards$ = this.store.model$.pipe(
+      map((model) => model.currentMove || [] )
     );
 
     this.cards$ = this.store.model$.pipe(
       withLatestFrom(this.store.gameInfo$, (model, gameInfo) =>
-        Object.keys(model.players[gameInfo.playerName].cards).map(
+        model.players[gameInfo.playerName].cards ? Object.keys(model.players[gameInfo.playerName].cards).map(
           (card) => model.players[gameInfo.playerName].cards[card]
-        )
+        ) : []
       )
     );
 

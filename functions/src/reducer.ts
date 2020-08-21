@@ -72,9 +72,9 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             currentMove: state.currentMove
               ? {
                   ...state.currentMove,
-                  [state.players[a.playerName].index.toString()]: a.card,
+                  [state.players[a.playerName].index]: a.card,
                 }
-              : { [state.players[a.playerName].index.toString()]: a.card },
+              : { [state.players[a.playerName].index]: a.card },
             players: {
               ...state.players,
               [a.playerName]: {
