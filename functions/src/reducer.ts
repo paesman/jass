@@ -12,7 +12,7 @@ const nextPlayerIndex = (state: GameState) =>
   ) + 1;
 
 const assignTeam = (index: number) =>
-  index % 2 ? 1 : 2
+  index % 2 ? 2 : 1
 
 const initialState: GameState = {
   players: {},
@@ -49,7 +49,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
           )
         : right({
             ...initialState,
-            players: { [a.playerName]: { cards: [1, 2, 3], team: 1, index: 1 } },
+            players: { [a.playerName]: { cards: [1, 2, 3], team: 1, index: 0 } },
           } as GameState),
     PlayCard: (a) =>
       isEmpty(state)
