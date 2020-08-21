@@ -62,7 +62,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...state,
             currentMove: state.currentMove
               ? [...state.currentMove, { card: a.card, playerIndex: state.players[a.playerName].index }]
-              : [{ card: a.card, playerName: action.playerName }],
+              : [{ card: a.card, playerIndex: state.players[a.playerName].index }],
             players: {
               ...state.players,
               [a.playerName]: { ...state.players[a.playerName], cards: state.players[a.playerName].cards.filter(c => c !== a.card) || [] } }
