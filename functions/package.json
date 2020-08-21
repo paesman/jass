@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "firebase": "^7.18.0",
     "firebase-admin": "^9.1.0",
-    "firebase-functions": "^3.9.1",
+    "firebase-functions": "^3.10.0",
     "fp-ts": "^2.6.1",
     "unionize": "^3.1.0"
   },
