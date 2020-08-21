@@ -35,7 +35,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             players: {
               ...state.players,
               [a.playerName]: {
-                cards: [1, 2, 3],
+                cards: { 0: 1, 1: 2, 2: 3 },
                 team: assignTeam(nextPlayerIndex(state)),
                 index: nextPlayerIndex(state),
               },
@@ -54,7 +54,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...initialState,
             players: {
               [a.playerName]: {
-                cards: { "1": 1, "2": 2, "3": 3 },
+                cards: { 0: 1, 1: 2, 2: 3 },
                 team: 1,
                 index: 0,
               },
@@ -82,11 +82,14 @@ export const reducerFunction = (state: GameState, action: Actions) =>
                 cards: {
                   ...Object.keys(state.players[a.playerName].cards).reduce(
                     (acc, curr) => {
-                      return state.players[a.playerName].cards[curr] === a.card
+                      return state.players[a.playerName].cards[
+                        parseInt(curr)
+                      ] === a.card
                         ? { ...acc }
                         : {
                             ...acc,
-                            [curr]: state.players[a.playerName].cards[curr],
+                            [curr]:
+                              state.players[a.playerName].cards[parseInt(curr)],
                           };
                     },
                     {}

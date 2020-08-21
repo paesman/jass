@@ -71,6 +71,9 @@ export class Store {
             .on('value', (snapshot) => this.ngZone.run(() => this.model$.next(snapshot.val())))
         )
       ).subscribe();
+
+
+    this.model$.subscribe(x => console.log(x));
   }
 
   dispatch(action: Actions) {
