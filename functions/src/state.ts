@@ -3,7 +3,8 @@ export interface Move { playerName: number, card: number; }
 export interface GameState {
   players: {
     [playerName: string]: {
-      cards: number[]
+      cards: number[],
+      team: number
     };
   };
   currentMove?: Move[];

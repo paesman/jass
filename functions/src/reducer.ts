@@ -4,6 +4,13 @@ import { ErrorTypes } from "./errortypes";
 import { Actions } from "./actions";
 import { GameState } from "./state";
 
+const assignTeam = (state: GameState) =>
+  Object.keys(state.players)
+    .map((playerName) => state.players[playerName].team)
+    .filter((team) => team === 1).length < 2
+    ? 1
+    : 2;
+
 const initialState: GameState = {
   players: {},
   currentMove: [],
@@ -25,7 +32,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...state,
             players: {
               ...state.players,
-              [a.playerName]: { cards: [1, 2, 3] },
+              [a.playerName]: { cards: [1, 2, 3], team: assignTeam(state) },
             },
           } as GameState),
     StartGame: (a) =>
@@ -39,7 +46,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
           )
         : right({
             ...initialState,
-            players: { [a.playerName]: { cards: [1, 2, 3] } },
+            players: { [a.playerName]: { cards: [1, 2, 3], team: 1 } },
           } as GameState),
     PlayCard: (a) =>
       isEmpty(state)

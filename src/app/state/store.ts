@@ -24,7 +24,7 @@ const database = firebase.database();
 
 interface Result { action: Actions; state: GameState; }
 
-export interface GameInfo { gameId: string; playerName: string; };
+export interface GameInfo { gameId: string; playerName: string; team: number; }
 
 @Injectable()
 export class Store {
@@ -44,9 +44,13 @@ export class Store {
             action
           )
           .pipe(
-            map((result) => result.action),
-            filter((actionR) => Actions.is.JoinGame(actionR) || Actions.is.StartGame(actionR)),
-            map((actionR) => ({gameId: actionR.gameId, playerName: actionR.playerName})),
+            // map((result) => result.action),
+            filter((result) => Actions.is.JoinGame(result.action) || Actions.is.StartGame(result.action)),
+            map((result) => ({
+              gameId: result.action.gameId,
+              playerName: result.action.playerName,
+              team: result.state.players[result.action.playerName].team
+            })),
             distinctUntilChanged((prev, next) => prev === next)
           )
       ),
