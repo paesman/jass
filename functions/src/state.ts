@@ -1,14 +1,15 @@
-export interface Move { playerIndex: number, card: number; }
+export interface Moves { [playerIndex: number]: number; }
+export interface Cards { [playerIndex: number]: number }
 
 export interface GameState {
   players: {
     [playerName: string]: {
-      cards: number[];
+      cards: Cards;
       team: number;
       index: number;
     };
   };
-  currentMove?: Move[];
+  currentMove?: Moves;
   score?: number;
   error?: string; // TODO: different error types
 }

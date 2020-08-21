@@ -17,19 +17,30 @@ export class JassteppichComponent {
   playerIndex$: Observable<number>;
 
   playCardClicked$ = new EventEmitter<number>();
-  playerIndexNameMap$: Observable<{ [x: number]: string }>;
+  playerIndexNameMap$: Observable<{ [playerIndex: number]: string }>;
+  playedCardsMap$: Observable<{ [playerIndex: number]: number }>;
 
   constructor(private store: Store) {
     this.model$ = this.store.model$;
 
-    this.playerIndexNameMap$ = this.store.model$.pipe(map(model => Object.keys(model.players).reduce((acc, curr) => {
-      return { ...acc, [model.players[curr].index]: curr  };
-    }, {} as { [index: number]: string })));
+    this.playerIndexNameMap$ = this.store.model$.pipe(
+      map(model =>
+        Object.keys(model.players).reduce(
+          (acc, curr) => ({ ...acc, [model.players[curr].index]: curr }),
+          {} as { [playerIndex: number]: string }
+        )
+      )
+    );
+
+    this.playedCardsMap$ = this.store.model$.pipe(
+      map((model) => model.currentMove)
+    );
 
     this.cards$ = this.store.model$.pipe(
-      withLatestFrom(
-        this.store.gameInfo$,
-        (model, gameInfo) => model.players[gameInfo.playerName].cards
+      withLatestFrom(this.store.gameInfo$, (model, gameInfo) =>
+        Object.keys(model.players[gameInfo.playerName].cards).map(
+          (card) => model.players[gameInfo.playerName].cards[card]
+        )
       )
     );
 
@@ -42,7 +53,7 @@ export class JassteppichComponent {
           gameInfo,
         }))
       )
-      .subscribe((context) =>
+      .subscribe(context =>
         this.store.dispatch(
           Actions.PlayCard({
             card: context.playedCard,

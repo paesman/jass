@@ -5,24 +5,24 @@
     <div></div>
     <div style="display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 140px;">
       <h1 style="text-align: center;">{{(playerIndexNameMap$ | async)[((playerIndex$ | async) + 2) % 4] || 'No kei Mitschpiler'}}</h1>
-      <img class="card" src="assets/karten/5.jpg" alt="">
+      <img class="card" src="assets/karten/backcover.jpg" alt="">
     </div>
     <div></div>
 
     <div style="display: flex; flex-direction: column; margin-left: auto; width: 140px;">
       <h1>{{(playerIndexNameMap$ | async)[((playerIndex$ | async) + 1) % 4] || 'No kei Gägner'}}</h1>
-      <img class="card" src="assets/karten/36.jpg" alt="">
+      <img class="card" src="assets/karten/backcover.jpg" alt="">
     </div>
     <div></div>
     <div style="display: flex; flex-direction: column; margin-right: auto; width: 140px;">
       <h1>{{(playerIndexNameMap$ | async)[((playerIndex$ | async) + 3) % 4] || 'No kei Gägner'}}</h1>
-      <img class="card" src="assets/karten/9.jpg" alt="">
+      <img class="card" src="assets/karten/backcover.jpg" alt="">
     </div>
 
     <div></div>
     <div style="display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 140px;">
       <h1 style="text-align: center;">Ig</h1>
-      <img class="card" src="assets/karten/15.jpg" alt="">
+      <img class="card" src="assets/karten/backcover.jpg" alt="">
     </div>
     <div></div>
 
@@ -38,3 +38,4 @@
 
 {{ model$ | async | json }}
 {{ playerIndexNameMap$ | async | json }}
+{{ playedCardsMap$ | async | json }}
