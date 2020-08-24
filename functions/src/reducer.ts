@@ -35,7 +35,7 @@ const initialState: GameState = {
   players: {},
   currentMove: {},
   score: 0,
-  cards: []
+  cards: shuffleCards(createCards(36))
 };
 
 export const reducerFunction = (state: GameState, action: Actions) =>
@@ -78,7 +78,6 @@ export const reducerFunction = (state: GameState, action: Actions) =>
                 index: 0,
               },
             },
-            cards: shuffleCards(createCards(36))
           } as GameState),
     PlayCard: (a) =>
       isEmpty(state)
