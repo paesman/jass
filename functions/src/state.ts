@@ -10,6 +10,7 @@ export interface GameState {
     };
   };
   currentMove?: Moves;
+  cards: number[]
   score?: number;
   error?: string; // TODO: different error types
 }

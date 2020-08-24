@@ -13,10 +13,29 @@ const nextPlayerIndex = (state: GameState) =>
 
 const assignTeam = (index: number) => (index % 2 ? 2 : 1);
 
+const shuffleCards = (cards: number[]) => {
+  for(let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const temp = cards[i]
+    cards[i] = cards[j]
+    cards[j] = temp
+  }
+  return cards;
+}
+
+const createCards = (count: number) => {
+  const sequence = [];
+  for(let i = 1; i <= count; i++) {
+    sequence.push(i);
+  }
+  return sequence;
+}
+
 const initialState: GameState = {
   players: {},
   currentMove: {},
   score: 0,
+  cards: []
 };
 
 export const reducerFunction = (state: GameState, action: Actions) =>
@@ -35,7 +54,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             players: {
               ...state.players,
               [a.playerName]: {
-                cards: { 0: 1, 1: 2, 2: 3 },
+                cards: state.cards.slice(nextPlayerIndex(state)*9, nextPlayerIndex(state)*9+8),
                 team: assignTeam(nextPlayerIndex(state)),
                 index: nextPlayerIndex(state),
               },
@@ -54,11 +73,12 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...initialState,
             players: {
               [a.playerName]: {
-                cards: { 0: 1, 1: 2, 2: 3 },
+                cards: state.cards.slice(0, 8),
                 team: 1,
                 index: 0,
               },
             },
+            cards: shuffleCards(createCards(36))
           } as GameState),
     PlayCard: (a) =>
       isEmpty(state)
