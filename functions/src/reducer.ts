@@ -73,7 +73,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...initialState,
             players: {
               [a.playerName]: {
-                cards: state.cards.slice(0, 8),
+                cards: initialState.cards.slice(0, 8),
                 team: 1,
                 index: 0,
               },
