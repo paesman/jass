@@ -54,7 +54,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             players: {
               ...state.players,
               [a.playerName]: {
-                cards: state.cards.slice(nextPlayerIndex(state)*9, nextPlayerIndex(state)*9+8),
+                cards: state.cards.splice(0, 9),
                 team: assignTeam(nextPlayerIndex(state)),
                 index: nextPlayerIndex(state),
               },
@@ -73,7 +73,7 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...initialState,
             players: {
               [a.playerName]: {
-                cards: initialState.cards.slice(0, 8),
+                cards: initialState.cards.splice(0, 9),
                 team: 1,
                 index: 0,
               },
