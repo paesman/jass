@@ -1,4 +1,4 @@
-import unionize, { ofType } from 'unionize';
+import unionize, {ofType} from 'unionize';
 
 export interface JoinGame {
   gameId: string;
@@ -16,10 +16,15 @@ export interface PlayCard {
   card: number;
 }
 
+export interface StartRound {
+  gameId: string;
+}
+
 const Actions = unionize({
   JoinGame: ofType<JoinGame>(),
   StartGame: ofType<StartGame>(),
-  PlayCard: ofType<PlayCard>()
+  PlayCard: ofType<PlayCard>(),
+  StartRound: ofType<StartRound>()
 }, { tag: 'type' });
 
 type Actions = typeof Actions._Union;

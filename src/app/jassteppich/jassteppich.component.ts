@@ -1,9 +1,9 @@
-import { Component, EventEmitter } from '@angular/core';
-import { Store } from '../state/store';
-import { Observable } from 'rxjs';
-import { withLatestFrom, map } from 'rxjs/operators';
-import { Actions } from 'functions/src/actions';
-import { GameState } from 'functions/src/state';
+import {Component, EventEmitter} from '@angular/core';
+import {Store} from '../state/store';
+import {Observable} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
+import {Actions} from 'functions/src/actions';
+import {GameState} from 'functions/src/state';
 
 @Component({
   selector: 'app-jassteppich',
@@ -20,8 +20,16 @@ export class JassteppichComponent {
   playerIndexNameMap$: Observable<{ [playerIndex: number]: string }>;
   playedCards$: Observable<{ [playerIndex: number]: number }>;
 
+  startRoundClicked$ = new EventEmitter();
+
   constructor(private store: Store) {
     this.model$ = this.store.model$;
+
+    this.startRoundClicked$.pipe(
+      withLatestFrom(this.store.gameInfo$, (_, gameInfo) =>
+        gameInfo
+      )
+    ).subscribe(gameInfo => this.store.dispatch(Actions.StartRound({gameId: gameInfo.gameId})))
 
     this.playerIndexNameMap$ = this.store.model$.pipe(
       map(model =>

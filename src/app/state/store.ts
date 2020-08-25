@@ -1,11 +1,11 @@
-import { Injectable, EventEmitter, NgZone } from '@angular/core';
-import { Actions } from 'functions/src/actions';
-import { HttpClient } from '@angular/common/http';
-import { ReplaySubject, Observable } from 'rxjs';
-import { tap, filter, map, mergeMap, distinctUntilChanged, publishReplay, refCount } from 'rxjs/operators';
+import {EventEmitter, Injectable, NgZone} from '@angular/core';
+import {Actions} from 'functions/src/actions';
+import {HttpClient} from '@angular/common/http';
+import {Observable, ReplaySubject} from 'rxjs';
+import {distinctUntilChanged, filter, map, mergeMap, publishReplay, refCount, tap} from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
-import { GameState } from 'functions/src/state';
+import {GameState} from 'functions/src/state';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8rdKbdHnLZVAkET8-W_bKDhszxnDdqWc',
@@ -46,7 +46,7 @@ export class Store {
           .pipe(
             // map((result) => result.action),
             filter((result) => Actions.is.JoinGame(result.action) || Actions.is.StartGame(result.action)),
-            map((result) => ({
+            map((result: any) => ({
               gameId: result.action.gameId,
               playerName: result.action.playerName,
               team: result.state.players[result.action.playerName].team,

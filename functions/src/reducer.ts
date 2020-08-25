@@ -1,8 +1,8 @@
-import { isEmpty } from "./utils";
-import { left, right } from "fp-ts/lib/Either";
-import { ErrorTypes } from "./errortypes";
-import { Actions } from "./actions";
-import { GameState } from "./state";
+import {isEmpty} from "./utils";
+import {left, right} from "fp-ts/lib/Either";
+import {ErrorTypes} from "./errortypes";
+import {Actions} from "./actions";
+import {GameState, Player} from "./state";
 
 const nextPlayerIndex = (state: GameState) =>
   Math.max(
@@ -31,15 +31,35 @@ const createCards = (count: number) => {
   return sequence;
 }
 
+const distributeCards = (players: { [playerName: string]: Player }) => {
+  const cards = shuffleCards(createCards(36));
+  return Object.keys(players).reduce((acc, playerName) => {
+    return {...acc, [playerName]: {...players[playerName], cards: cards.splice(0, 9)}};
+  }, {} as { [playerName: string]: Player })
+}
+
 const initialState: GameState = {
   players: {},
   currentMove: {},
   score: 0,
-  cards: shuffleCards(createCards(36))
+  status: 'initial'
 };
 
 export const reducerFunction = (state: GameState, action: Actions) =>
   Actions.match(action, {
+    StartRound: (a) =>
+      isEmpty(state)
+        ? left(
+        ErrorTypes.BadRequest(
+          new Error(
+            `Game does not exist!, You can create a new game if you want.`
+          )
+        )
+        )
+        : right({
+          ...state,
+          players: distributeCards(state.players)
+        } as GameState),
     JoinGame: (a) =>
       isEmpty(state)
         ? left(
@@ -51,10 +71,10 @@ export const reducerFunction = (state: GameState, action: Actions) =>
           )
         : right({
             ...state,
+            status: Object.values(state.players).length === 3 ? 'gameReady' : 'gameCreated',
             players: {
               ...state.players,
               [a.playerName]: {
-                cards: state.cards.splice(0, 9),
                 team: assignTeam(nextPlayerIndex(state)),
                 index: nextPlayerIndex(state),
               },
@@ -73,7 +93,6 @@ export const reducerFunction = (state: GameState, action: Actions) =>
             ...initialState,
             players: {
               [a.playerName]: {
-                cards: initialState.cards.splice(0, 9),
                 team: 1,
                 index: 0,
               },

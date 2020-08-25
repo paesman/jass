@@ -42,6 +42,8 @@
     </div>
   </div>
 
+  <button *ngIf="(playerIndex$ | async) === 0 && model.status === 'gameReady'" (click)="startRoundClicked$.emit()"></button>
+
 </ng-container>
 
 <ng-template #blank>
